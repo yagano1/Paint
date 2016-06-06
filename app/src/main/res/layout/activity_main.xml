@@ -8,7 +8,9 @@
     <com.example.linh.paint.SimpleDrawingView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".85"/>
+        android:layout_weight=".85"
+        android:background="@android:color/holo_blue_bright"
+        android:id="@+id/drawing"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -19,22 +21,27 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".25"
-            android:text="BG"/>
+            android:text="BG"
+            android:id="@+id/buttonBg"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".25"
-            android:text="Pencil"/>
+            android:text="Pencil"
+            android:id="@+id/buttonPencil"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".25"
-            android:text="Earse"/>
+            android:text="Earse"
+            android:id="@+id/buttonEarse"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".25"
-            android:text="Export"/>
+            android:text="Share"
+            android:id="@+id/buttonExport"
+            android:actionProviderClass="android.widget.ShareActionProvider" />
 
 
     </LinearLayout>
