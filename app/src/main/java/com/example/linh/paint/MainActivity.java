@@ -3,9 +3,11 @@ package com.example.linh.paint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +29,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import es.dmoral.coloromatic.ColorOMaticDialog;
+import es.dmoral.coloromatic.IndicatorMode;
+import es.dmoral.coloromatic.OnColorSelectedListener;
+import es.dmoral.coloromatic.colormode.ColorMode;
 
 public class MainActivity extends AppCompatActivity {
     private Button buttonBg;
@@ -60,7 +67,19 @@ public class MainActivity extends AppCompatActivity {
         buttonPencil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawingView.setErase(false);
+                new ColorOMaticDialog.Builder()
+                        .initialColor(Color.WHITE)
+                        .colorMode(ColorMode.ARGB) // RGB, ARGB, HVS
+                        .indicatorMode(IndicatorMode.HEX) // HEX or DECIMAL; Note that using HSV with IndicatorMode.HEX is not recommended
+                        .onColorSelected(new OnColorSelectedListener() {
+                            @Override
+                            public void onColorSelected(@ColorInt int i) {
+                                drawingView.setColor(i);
+                            }
+                        })
+                        .showColorIndicator(true) // Default false, choose to show text indicator showing the current color in HEX or DEC (see images) or not
+                        .create()
+                        .show(getSupportFragmentManager(), "ColorOMaticDialog");
 
             }
         });

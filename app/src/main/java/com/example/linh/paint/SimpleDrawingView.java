@@ -122,9 +122,9 @@ public class SimpleDrawingView extends View {
         if(erase) drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         else drawPaint.setXfermode(null);
     }
-    public void setBg()
+    public void setColor(int i)
     {
-
+        drawPaint.setColor(i);
     }
     }
 
