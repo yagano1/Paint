@@ -69,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
+                TextView tv = new TextView(MainActivity.this);
+
+                relativeLayout.addView(tv);
+                tv.setText("AAAAA");
             }
         });
         buttonPencil = (Button) findViewById(R.id.buttonPencil);
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         buttonExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-shareIt();
+                shareIt();
             }
 
         });
@@ -203,8 +208,6 @@ shareIt();
         } catch (Exception e) {
 
         }
-
-
 
         Intent sharingIntent = new Intent();
         sharingIntent.setAction(Intent.ACTION_SEND);
