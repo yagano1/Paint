@@ -136,6 +136,9 @@ public class SimpleDrawingView extends View {
         drawPaint.setColor(i);
 
     }
+    public int getColor(){
+        return drawPaint.getColor();
+    }
 
 }
 

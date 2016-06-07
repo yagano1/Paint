@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 new ColorOMaticDialog.Builder()
-                        .initialColor(Color.WHITE)
+                        .initialColor(drawingView.getColor())
                         .colorMode(ColorMode.ARGB) // RGB, ARGB, HVS
                         .indicatorMode(IndicatorMode.HEX) // HEX or DECIMAL; Note that using HSV with IndicatorMode.HEX is not recommended
                         .onColorSelected(new OnColorSelectedListener() {
