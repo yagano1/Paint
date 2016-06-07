@@ -1,26 +1,21 @@
 package com.example.linh.paint;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -28,9 +23,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
+
 
 import es.dmoral.coloromatic.ColorOMaticDialog;
 import es.dmoral.coloromatic.IndicatorMode;
@@ -43,15 +37,14 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonErase;
     private Button buttonExport;
     private SimpleDrawingView drawingView;
+    private Button buttonChangeBg;
+    private Button buttonNewBg;
     private File root;
-    private ListView listviewFolder;
-    private TextView textFolder;
-    private Button buttonParentFolder;
-    private File curFolder;
-    private List<String> fileList = new ArrayList<String>();
     private static final int SELECTED_PICTURE = 1 ;
-    private ShareActionProvider mShareActionProvider;
     private File imagePath;
+    private LinearLayout menubar;
+    ValueAnimator mAnimator;
+    boolean changeBG = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +52,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         drawingView = (SimpleDrawingView) findViewById(R.id.drawing);
         buttonErase = (Button) findViewById(R.id.buttonEarse);
+        menubar= (LinearLayout) findViewById(R.id.menubar);
         buttonErase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    drawingView.setErase(true);
+                drawingView.setErase(true);
             }
         });
         buttonPencil = (Button) findViewById(R.id.buttonPencil);
@@ -87,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         buttonExport = (Button) findViewById(R.id.buttonExport);
+
         buttonExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,9 +117,93 @@ public class MainActivity extends AppCompatActivity {
         buttonBg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               displayDialogOpenBg();
+                menubar.setVisibility(View.VISIBLE);
+                mAnimator.start();
             }
         });
+        menubar.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+
+                    @Override
+                    public boolean onPreDraw() {
+                        menubar.getViewTreeObserver()
+                                .removeOnPreDrawListener(this);
+                        menubar.setVisibility(View.GONE);
+
+                        final int widthSpec =     View.MeasureSpec.makeMeasureSpec(
+                                0, View.MeasureSpec.UNSPECIFIED);
+                        final int heightSpec = View.MeasureSpec
+                                .makeMeasureSpec(0,
+                                        View.MeasureSpec.UNSPECIFIED);
+                        menubar.measure(widthSpec, heightSpec);
+
+                        mAnimator = slideAnimator(0,
+                                menubar.getMeasuredHeight());
+                        return true;
+                    }
+                });
+        buttonChangeBg = (Button) findViewById(R.id.buttonChangeBG);
+        buttonChangeBg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeBG = true;
+                displayDialogOpenBg();
+
+            }
+        });
+        buttonNewBg = (Button) findViewById(R.id.buttonNewBG);
+        buttonNewBg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeBG = false;
+                displayDialogOpenBg();
+
+            }
+        });
+    }
+    private ValueAnimator slideAnimator(int start, int end) {
+
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new     ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                // Update Height
+                int value = (Integer) valueAnimator.getAnimatedValue();
+
+                ViewGroup.LayoutParams layoutParams = menubar
+                        .getLayoutParams();
+                layoutParams.height = value;
+                menubar.setLayoutParams(layoutParams);
+            }
+        });
+        return animator;
+    }
+
+    private void collapse() {
+        int finalHeight = menubar.getHeight();
+
+        ValueAnimator mAnimator = slideAnimator(finalHeight, 0);
+
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                menubar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationStart(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        });
+        mAnimator.start();
     }
 
     private void shareIt() {
@@ -184,41 +263,24 @@ public class MainActivity extends AppCompatActivity {
             case SELECTED_PICTURE:
                 if (resultCode == RESULT_OK)
                 {
-
                     Uri uri = data.getData();
                     String[]projection={MediaStore.Images.Media.DATA};
                     Cursor cursor = getContentResolver().query(uri,projection,null,null,null);
                     cursor.moveToFirst();
                     int columnIndex = cursor.getColumnIndex(projection[0]);
                     String filePatch = cursor.getString(columnIndex);
-                    drawingView.startNew();
-                    drawingView.setupDrawing(filePatch);
+                    if(changeBG)
+                    {
+                        drawingView.changeBg(filePatch);
+                    }
+                    else
+                    {
+                        drawingView.startNew();
+                        drawingView.setupDrawing(filePatch);
+                    }
                     cursor.close();
                 }
         }
     }
-
-    private void listDir(File f) {
-        if(f.equals(root))
-        {
-            buttonParentFolder.setEnabled(false);
-        }
-        else
-        {
-            buttonParentFolder.setEnabled(true);
-        }
-
-        curFolder = f;
-        textFolder.setText(f.getPath());
-        File[] files  = f.listFiles();
-        fileList.clear();
-        for(File file : files)
-        {
-            fileList.add(file.getPath());
-        }
-        ArrayAdapter<String> direciryList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,fileList);
-        listviewFolder.setAdapter(direciryList);
-    }
-
 
 }

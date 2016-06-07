@@ -41,7 +41,6 @@ public class SimpleDrawingView extends View {
     private File b;
     public SimpleDrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         setupDrawingNull();
 
     }
@@ -49,6 +48,13 @@ public class SimpleDrawingView extends View {
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
+    }
+
+    public void changeBg(String a){
+        Resources res = getResources();
+        Bitmap bitmap = BitmapFactory.decodeFile(a);
+        BitmapDrawable bd = new BitmapDrawable(res, bitmap);
+        setBackground(bd);
     }
     private void setupDrawingNull() {
         drawPath = new Path();
