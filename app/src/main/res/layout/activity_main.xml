@@ -7,7 +7,10 @@
     android:orientation="vertical"
     android:layout_alignParentBottom="true"
     android:gravity="bottom">
-        <LinearLayout
+
+
+
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -59,10 +62,17 @@
                     android:id="@+id/buttonChangeBG"/>
             </LinearLayout>
         </LinearLayout>
-    <com.example.linh.paint.SimpleDrawingView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_bright"
-        android:id="@+id/drawing"/>
+        android:id="@+id/test">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView"
+            android:src="@drawable/abcd"
+            android:scaleType="center"/>
+
+    </RelativeLayout>
 
 </LinearLayout>
