@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         .onColorSelected(new OnColorSelectedListener() {
                             @Override
                             public void onColorSelected(@ColorInt int i) {
+                                drawingView.setErase(false);
                                 drawingView.setColor(i);
                             }
                         })
@@ -125,10 +128,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void shareIt() {
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        Uri screenshotUri = Uri.parse(imagePath.getAbsolutePath());
-        sharingIntent.setType("image/jpeg");
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+        drawingView.setDrawingCacheEnabled(true);
+        drawingView.invalidate();
+        String path = Environment.getExternalStorageDirectory().toString();
+        OutputStream fOut = null;
+        File file = new File(path,
+                "android_drawing_app.png");
+        file.getParentFile().mkdirs();
+
+        try {
+            file.createNewFile();
+        } catch (Exception e) {
+
+        }
+
+        try {
+            fOut = new FileOutputStream(file);
+        } catch (Exception e) {
+
+        }
+        if (drawingView.getDrawingCache() == null) {
+        }
+        drawingView.getDrawingCache()
+                .compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+        try {
+            fOut.flush();
+            fOut.close();
+        } catch (IOException e) {
+
+        }
+
+        Intent sharingIntent = new Intent();
+        sharingIntent.setAction(Intent.ACTION_SEND);
+        sharingIntent.setType("image/png");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(sharingIntent, "Share image using"));
 
     }
@@ -185,4 +219,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> direciryList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,fileList);
         listviewFolder.setAdapter(direciryList);
     }
+
+
 }

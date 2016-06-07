@@ -12,6 +12,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -117,16 +119,22 @@ public class SimpleDrawingView extends View {
     }
     private boolean erase=false;
     public void setErase(boolean isErase){
-//set erase true or false
+        //set erase true or false
         erase=isErase;
-        if(erase) drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        else drawPaint.setXfermode(null);
+        if(erase){
+            drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+
+        }else{
+            drawPaint.setXfermode(null);
+        }
     }
     public void setColor(int i)
     {
         drawPaint.setColor(i);
+
     }
-    }
+
+}
 
 
 
