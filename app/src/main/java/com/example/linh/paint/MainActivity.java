@@ -24,10 +24,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         buttonExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+shareIt();
             }
 
         });
@@ -187,23 +186,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void shareIt() {
+        relativeLayout.setDrawingCacheEnabled(true);
+        Bitmap b = relativeLayout.getDrawingCache();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        b.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
         String path = Environment.getExternalStorageDirectory().toString();
         OutputStream fOut = null;
         File file = new File(path,
                 "android_drawing_app.png");
-        file.getParentFile().mkdirs();
 
         try {
             file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(bytes.toByteArray());
+            outputStream.close();
         } catch (Exception e) {
 
         }
 
-        try {
-            fOut = new FileOutputStream(file);
-        } catch (Exception e) {
-
-        }
 
 
         Intent sharingIntent = new Intent();

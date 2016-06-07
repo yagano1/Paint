@@ -69,7 +69,5 @@
             android:id="@+id/imageView"
             android:src="@drawable/abcd"
             android:scaleType="center"/>
-
     </RelativeLayout>
-
 </LinearLayout>
