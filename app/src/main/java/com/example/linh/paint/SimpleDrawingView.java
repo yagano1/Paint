@@ -92,7 +92,9 @@ public class SimpleDrawingView extends View {
     protected void onDraw(Canvas canvas) {
     //draw view
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint);
+        if (!erase) {
+            canvas.drawPath(drawPath, drawPaint);
+        }
     }
 
     @Override
@@ -122,6 +124,7 @@ public class SimpleDrawingView extends View {
         //set erase true or false
         erase=isErase;
         if(erase){
+
             drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 
         }else{
