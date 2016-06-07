@@ -60,12 +60,21 @@
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:id="@+id/menuText">
+                android:layout_height="50dp"
+                android:id="@+id/menuText"
+                android:orientation="horizontal">
                 <EditText
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="Edit text"/>
+                    android:text="Edit text"
+                    android:layout_weight=".80"
+                    android:id="@+id/textAdd"/>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_weight=".20"
+                    android:layout_height="100dp"
+                    android:id="@+id/buttonAddText"
+                    android:text="Ok"/>
             </LinearLayout>
         </LinearLayout>
     <RelativeLayout

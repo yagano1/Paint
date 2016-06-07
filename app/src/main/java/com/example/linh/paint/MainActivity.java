@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -45,24 +46,35 @@ public class MainActivity extends AppCompatActivity {
     boolean menubariSVisiable = true;
     RelativeLayout relativeLayout;
     ImageView imageView;
+    Button butonAddText;
+    EditText textAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
         setContentView(R.layout.activity_main);
         relativeLayout = (RelativeLayout ) findViewById(R.id.test);
+        butonAddText = (Button) findViewById(R.id.buttonAddText);
         imageView = (ImageView) findViewById(R.id.imageView);
         buttonErase = (Button) findViewById(R.id.buttonEarse);
         menubg = (LinearLayout) findViewById(R.id.menubar);
         menuText = (LinearLayout) findViewById(R.id.menuText);
         TextView textView = new TextView(this);
         textView.setText("New text");
+        textAdd = (EditText) findViewById(R.id.textAdd);
         buttonErase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        butonAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView tv = new TextView(MainActivity.this);
                 relativeLayout.addView(tv);
-                tv.setText("AAAAA");
+                tv.setText(textAdd.getText().toString());
+                collapseAddText();
             }
         });
         buttonPencil = (Button) findViewById(R.id.buttonPencil);
@@ -192,7 +204,32 @@ public class MainActivity extends AppCompatActivity {
         });
         return animator;
     }
+    private void collapseAddText()
+    {
+        int finalHeight = menuText.getHeight();
 
+        ValueAnimator mAnimator = slideAnimator(finalHeight, 0);
+
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                menuText.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationStart(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        });
+        mAnimator.start();
+    }
     private void collapse() {
         int finalHeight = menubg.getHeight();
 
