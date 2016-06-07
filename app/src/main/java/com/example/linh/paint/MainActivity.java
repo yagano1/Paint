@@ -5,6 +5,8 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.database.Cursor;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -50,12 +53,14 @@ public class MainActivity extends AppCompatActivity {
     boolean menubariSVisiable = true;
     RelativeLayout relativeLayout;
     private EditText editText;
+    ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
         setContentView(R.layout.activity_main);
-        relativeLayout = (RelativeLayout                                                                                                        ) findViewById(R.id.test);
+        relativeLayout = (RelativeLayout ) findViewById(R.id.test);
+        imageView = (ImageView) findViewById(R.id.imageView);
 //        drawingView = (SimpleDrawingView) findViewById(R.id.drawing);
         buttonErase = (Button) findViewById(R.id.buttonEarse);
         menubar= (LinearLayout) findViewById(R.id.menubar);
@@ -78,24 +83,7 @@ public class MainActivity extends AppCompatActivity {
         buttonExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePath = new File(Environment.getExternalStorageDirectory() + "/data/screenshot.png");
-                FileOutputStream fos;
-                try
-                {
 
-                }
-                catch (FileNotFoundException e)
-                {
-                    Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                            "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
-                    unsavedToast.show();
-                }
-                catch (IOException e)
-                {
-                    Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                            "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
-                    unsavedToast.show();
-                }
             }
 
         });
@@ -250,10 +238,13 @@ public class MainActivity extends AppCompatActivity {
                     String filePatch = cursor.getString(columnIndex);
                     if(changeBG)
                     {
-
+                        Bitmap bmp = BitmapFactory.decodeFile(filePatch);
+                        imageView.setImageBitmap(bmp);
                     }
                     else
                     {
+                        Bitmap bmp = BitmapFactory.decodeFile(filePatch);
+                        imageView.setImageBitmap(bmp);
                     }
                     cursor.close();
                 }
