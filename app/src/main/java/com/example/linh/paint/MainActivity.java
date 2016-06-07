@@ -17,24 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-
-
-
-import es.dmoral.coloromatic.ColorOMaticDialog;
-import es.dmoral.coloromatic.IndicatorMode;
-import es.dmoral.coloromatic.OnColorSelectedListener;
-import es.dmoral.coloromatic.colormode.ColorMode;
 
 public class MainActivity extends AppCompatActivity {
     private Button buttonBg;
@@ -46,12 +37,13 @@ public class MainActivity extends AppCompatActivity {
     private File root;
     private static final int SELECTED_PICTURE = 1 ;
     private File imagePath;
-    private LinearLayout menubar;
+    private LinearLayout menubg;
+    private LinearLayout menuText;
     ValueAnimator mAnimator;
+    ValueAnimator mAnimatorb;
     boolean changeBG = false;
     boolean menubariSVisiable = true;
     RelativeLayout relativeLayout;
-    private EditText editText;
     ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,18 +52,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         relativeLayout = (RelativeLayout ) findViewById(R.id.test);
         imageView = (ImageView) findViewById(R.id.imageView);
-//        drawingView = (SimpleDrawingView) findViewById(R.id.drawing);
         buttonErase = (Button) findViewById(R.id.buttonEarse);
-        menubar= (LinearLayout) findViewById(R.id.menubar);
+        menubg = (LinearLayout) findViewById(R.id.menubar);
+        menuText = (LinearLayout) findViewById(R.id.menuText);
         TextView textView = new TextView(this);
         textView.setText("New text");
         buttonErase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 TextView tv = new TextView(MainActivity.this);
-
                 relativeLayout.addView(tv);
                 tv.setText("AAAAA");
             }
@@ -80,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         buttonPencil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                menuText.setVisibility(View.VISIBLE);
+                mAnimatorb.start();
 
             }
         });
@@ -97,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(menubariSVisiable)
                 {
-                    menubar.setVisibility(View.VISIBLE);
+                    menubg.setVisibility(View.VISIBLE);
                     mAnimator.start();
                     menubariSVisiable = false;
                 }
@@ -108,24 +99,45 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        menubar.getViewTreeObserver().addOnPreDrawListener(
+        menubg.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
 
                     @Override
                     public boolean onPreDraw() {
-                        menubar.getViewTreeObserver()
+                        menubg.getViewTreeObserver()
                                 .removeOnPreDrawListener(this);
-                        menubar.setVisibility(View.GONE);
+                        menubg.setVisibility(View.GONE);
 
                         final int widthSpec =     View.MeasureSpec.makeMeasureSpec(
                                 0, View.MeasureSpec.UNSPECIFIED);
                         final int heightSpec = View.MeasureSpec
                                 .makeMeasureSpec(0,
                                         View.MeasureSpec.UNSPECIFIED);
-                        menubar.measure(widthSpec, heightSpec);
+                        menubg.measure(widthSpec, heightSpec);
 
                         mAnimator = slideAnimator(0,
-                                menubar.getMeasuredHeight());
+                                menubg.getMeasuredHeight());
+                        return true;
+                    }
+                });
+        menuText.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+
+                    @Override
+                    public boolean onPreDraw() {
+                        menuText.getViewTreeObserver()
+                                .removeOnPreDrawListener(this);
+                        menuText.setVisibility(View.GONE);
+
+                        final int widthSpec =     View.MeasureSpec.makeMeasureSpec(
+                                0, View.MeasureSpec.UNSPECIFIED);
+                        final int heightSpec = View.MeasureSpec
+                                .makeMeasureSpec(0,
+                                        View.MeasureSpec.UNSPECIFIED);
+                        menuText.measure(widthSpec, heightSpec);
+
+                        mAnimatorb = slideAnimatorb(0,
+                                menuText.getMeasuredHeight());
                         return true;
                     }
                 });
@@ -155,24 +167,41 @@ public class MainActivity extends AppCompatActivity {
                 // Update Height
                 int value = (Integer) valueAnimator.getAnimatedValue();
 
-                ViewGroup.LayoutParams layoutParams = menubar
+                ViewGroup.LayoutParams layoutParams = menubg
                         .getLayoutParams();
                 layoutParams.height = value;
-                menubar.setLayoutParams(layoutParams);
+                menubg.setLayoutParams(layoutParams);
+            }
+        });
+        return animator;
+    }
+
+    private ValueAnimator slideAnimatorb(int start, int end) {
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+        animator.addUpdateListener(new     ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                // Update Height
+                int value = (Integer) valueAnimator.getAnimatedValue();
+
+                ViewGroup.LayoutParams layoutParams = menuText
+                        .getLayoutParams();
+                layoutParams.height = value;
+                menuText.setLayoutParams(layoutParams);
             }
         });
         return animator;
     }
 
     private void collapse() {
-        int finalHeight = menubar.getHeight();
+        int finalHeight = menubg.getHeight();
 
         ValueAnimator mAnimator = slideAnimator(finalHeight, 0);
 
         mAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animator) {
-                menubar.setVisibility(View.GONE);
+                menubg.setVisibility(View.GONE);
             }
 
             @Override
